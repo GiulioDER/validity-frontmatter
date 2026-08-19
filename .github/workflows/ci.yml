@@ -23,9 +23,9 @@ jobs:
       run:
         working-directory: reference/typescript
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node }}
 
@@ -39,7 +39,7 @@ jobs:
     name: The reference implementation stays dependency free
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # The zero-dependency and no-platform-API promises are the reason this file can be dropped
       # into an Obsidian plugin that also runs on mobile. A promise nothing checks is a promise
