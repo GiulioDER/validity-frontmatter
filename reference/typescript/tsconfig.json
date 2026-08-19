@@ -1,0 +1,18 @@
+{
+  "//": "The library itself has zero dependencies, so it typechecks with no @types at all. The test file imports node:test and node:assert; add @types/node to include it here.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "exactOptionalPropertyTypes": false,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["validity.ts"]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "validity-frontmatter",
+  "version": "1.0.0",
+  "description": "Reference implementation of Validity Frontmatter 1.0: valid_from, valid_until and supersedes for plain text documents",
+  "license": "MIT",
+  "type": "module",
+  "main": "validity.ts",
+  "types": "validity.ts",
+  "files": ["validity.ts", "README.md"],
+  "keywords": ["frontmatter", "markdown", "validity", "supersedes", "bitemporal", "obsidian"],
+  "scripts": {
+    "test": "node --experimental-strip-types --test validity.test.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reference-typescript:
+    name: TypeScript reference (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22.x is the oldest release with --experimental-strip-types; 24.x is where it is on by
+        # default. Both are tested so the "runs anywhere" claim in the README is checked, not assumed.
+        node: ['22.x', '24.x']
+    defaults:
+      run:
+        working-directory: reference/typescript
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Conformance tests (includes all 11 specification vectors)
+        run: node --experimental-strip-types --test validity.test.ts
+
+      - name: Typecheck under strict
+        run: npx --yes -p typescript@5.7 tsc --noEmit -p tsconfig.json
+
+  no-dependencies:
+    name: The reference implementation stays dependency free
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The zero-dependency and no-platform-API promises are the reason this file can be dropped
+      # into an Obsidian plugin that also runs on mobile. A promise nothing checks is a promise
+      # that quietly stops being true, so both are asserted here rather than trusted.
+      - name: No runtime imports in validity.ts
+        run: |
+          if grep -nE '^\s*import .* from|^\s*(const|let|var) .*= *require\(' reference/typescript/validity.ts; then
+            echo "::error::validity.ts must have no runtime imports"
+            exit 1
+          fi
+
+      - name: No platform APIs in validity.ts
+        run: |
+          if grep -nE '\b(require|process|__dirname|globalThis\.process)\b|["'\'']node:' reference/typescript/validity.ts; then
+            echo "::error::validity.ts must not reference Node or platform APIs"
+            exit 1
+          fi
+
+      - name: No dependencies declared
+        run: |
+          if grep -qE '"(dependencies|devDependencies|peerDependencies)"' reference/typescript/package.json; then
+            echo "::error::reference/typescript/package.json must declare no dependencies"
+            exit 1
+          fi
